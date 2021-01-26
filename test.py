@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import pygame_menu
+import os
 
 pygame.init()
 FRAME_COLOR = (140, 140, 140)
@@ -10,33 +11,13 @@ GREY = (200, 200, 200)
 HEADER_COLOR = (50, 50, 50)
 SNAKE_COLOR = (0, 100, 0)
 
-# Фон и яблоко
 image = pygame.image.load("picture_menu.png")
 apple_image = pygame.image.load("apple.png")
-# Передвижение основной части
-move_horizontal_image = pygame.image.load("move.png")
-up_down_moves = pygame.image.load("up_down_moves.png")
-# Голова
-head_image = pygame.image.load("top.png")
-up_down_image = pygame.image.load("up_down.png")
-# Поворот
-up_right_image = pygame.image.load("up_right.png")
-
-back_vertical = pygame.image.load("back_vertical.png")
-back_horizontal = pygame.image.load("back_horizontal.png")
-
-head_image = pygame.transform.scale(head_image, (20, 20))
-up_down_image = pygame.transform.scale(up_down_image, (20, 20))
-move_horizontal_image = pygame.transform.scale(move_horizontal_image, (20, 20))
-move_vertical_image = pygame.transform.scale(up_down_moves, (20, 20))
-back_vertical = pygame.transform.scale(back_vertical, (20, 20))
-back_horizontal = pygame.transform.scale(back_horizontal, (20, 20))
-up_right_image = pygame.transform.scale(up_right_image, (20, 20))
 
 count_of_blocks = 20
 HEADER = 70
 block_size = 20
-MARGIN = 1
+MARGIN = 0
 
 size = [560, 530]
 screen = pygame.display.set_mode(size)
@@ -47,6 +28,60 @@ courier = pygame.font.SysFont('courier', 28)
 dif_speed = 7
 running = True
 variant = 1
+
+
+def load_image(name, papka):
+    fullname = os.path.join(papka, name)
+    image = pygame.image.load(fullname)
+    return image
+
+
+# Передвижение основной части
+move_horizontal_image = load_image("h_body1.png", "skin1")
+move_vertical_image = load_image("v_body1.png", "skin1")
+# Голова
+head_image = load_image("h_top1.png", "skin1")
+up_down_image = load_image("v_top1.png", "skin1")
+# Поворот
+up_right_image = load_image("turn_1.png", "skin1")
+
+back_vertical = load_image("v_back1.png", "skin1")
+back_horizontal = load_image("h_back1.png", "skin1")
+head_image = pygame.transform.scale(head_image, (20, 20))
+up_down_image = pygame.transform.scale(up_down_image, (20, 20))
+move_horizontal_image = pygame.transform.scale(move_horizontal_image, (20, 20))
+move_vertical_image = pygame.transform.scale(move_vertical_image, (20, 20))
+back_vertical = pygame.transform.scale(back_vertical, (20, 20))
+back_horizontal = pygame.transform.scale(back_horizontal, (20, 20))
+up_right_image = pygame.transform.scale(up_right_image, (20, 20))
+
+
+def skin_select(value, skin):
+    global move_horizontal_image, \
+        move_vertical_image, head_image, up_down_image, up_right_image, back_vertical, back_horizontal
+    if skin == 2:
+        move_horizontal_image = load_image("h_body1.png", "skin2")
+        move_vertical_image = load_image("v_body1.png", "skin2")
+        head_image = load_image("h_top1.png", "skin2")
+        up_down_image = load_image("v_top1.png", "skin2")
+        up_right_image = load_image("turn_1.png", "skin2")
+        back_vertical = load_image("v_back1.png", "skin2")
+        back_horizontal = load_image("h_back1.png", "skin2")
+    elif skin == 3:
+        move_horizontal_image = load_image("h_body1.png", "skin3")
+        move_vertical_image = load_image("v_body1.png", "skin3")
+        head_image = load_image("h_top1.png", "skin3")
+        up_down_image = load_image("v_top1.png", "skin3")
+        up_right_image = load_image("turn_1.png", "skin3")
+        back_vertical = load_image("v_back1.png", "skin3")
+        back_horizontal = load_image("h_back1.png", "skin3")
+    head_image = pygame.transform.scale(head_image, (20, 20))
+    up_down_image = pygame.transform.scale(up_down_image, (20, 20))
+    move_horizontal_image = pygame.transform.scale(move_horizontal_image, (20, 20))
+    move_vertical_image = pygame.transform.scale(move_vertical_image, (20, 20))
+    back_vertical = pygame.transform.scale(back_vertical, (20, 20))
+    back_horizontal = pygame.transform.scale(back_horizontal, (20, 20))
+    up_right_image = pygame.transform.scale(up_right_image, (20, 20))
 
 
 class SnakeBlock:
@@ -91,8 +126,6 @@ def set_difficulty(value, difficulty):
 # Начало игры (кнопка из меню)
 def start_the_game():
     switch = 3
-    pre_switch = switch
-    turns = False
     snake_blockss = list()
     total = 0
     running = True
@@ -135,8 +168,7 @@ def start_the_game():
                     else:
                         flag = True
                         if len(snake_blocks) > 2:
-                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y))
-                            pre_switch = switch
+                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y, switch))
                         switch = 1
                     buf_row = -1
                     buf_col = 0
@@ -146,8 +178,7 @@ def start_the_game():
                     else:
                         flag = True
                         if len(snake_blocks) > 2:
-                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y))
-                        pre_switch = switch
+                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y, switch))
                         switch = 2
                     buf_row = 0
                     buf_col = -1
@@ -157,8 +188,7 @@ def start_the_game():
                     else:
                         flag = True
                         if len(snake_blocks) > 2:
-                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y))
-                            pre_switch = switch
+                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y, switch))
                         switch = 3
                     buf_row = 0
                     buf_col = 1
@@ -168,8 +198,7 @@ def start_the_game():
                     else:
                         flag = True
                         if len(snake_blocks) > 2:
-                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y))
-                        pre_switch = switch
+                            head_pos.append((snake_blocks[-1].x, snake_blocks[-1].y, switch))
                         switch = 4
                     buf_row = 1
                     buf_col = 0
@@ -213,106 +242,87 @@ def start_the_game():
         # Отрисовка тела
         for i in range(len(snake_blocks)):
             if len(snake_blocks) > 2:
-                if i != 0 and i != len(snake_blocks) - 1 and len(head_pos) > 0 \
-                        and (snake_blocks[i].x, snake_blocks[i].y) == head_pos[0]:
-                    block_pos = (snake_blocks[i].x, snake_blocks[i].y)
-                    other_block_pos = (snake_blocks[i + 1].x, snake_blocks[i + 1].y)
-                    print(other_block_pos)
-                    if head_pos[0][0] - other_block_pos[0] > 0 and switch == 1:
-                        new_up_right = pygame.transform.flip(up_right_image, True, False)
-                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-                    elif switch == 3 and pre_switch == 4:
-                        new_up_right = pygame.transform.flip(up_right_image, False, True)
-                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-
-                    elif switch == 4 and pre_switch == 3:
-                        new_up_right = pygame.transform.flip(up_right_image, True, False)
-                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-                    elif switch == 1 and pre_switch == 2:
-                        new_up_right = pygame.transform.flip(up_right_image, False, True)
-                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-
-                    elif block_pos[0] - other_block_pos[0] > 0:
-                        new_up_right = pygame.transform.flip(up_right_image, True, False)
-                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        screen.blit(up_right_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-
-
-                    elif head_pos[0][0] - other_block_pos[0] < 0 and switch == 2:
-                        screen.blit(up_right_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif head_pos[0][0] - other_block_pos[0] > 0 and switch == 4:
-                        screen.blit(up_right_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-
-                    elif block_pos == head_pos[0] and switch == 2 and pre_switch == 4:
+                if i != 0 and i != len(snake_blocks) - 1:
+                    block_pos = (snake_blocks[i].y, snake_blocks[i].x)
+                    prev_block_pos = (snake_blocks[i + 1].y, snake_blocks[i + 1].x)
+                    next_block_pos = (snake_blocks[i - 1].y, snake_blocks[i - 1].x)
+                    a = block_pos[0] - next_block_pos[0]
+                    b = block_pos[1] - next_block_pos[1]
+                    if block_pos[0] - prev_block_pos[0] > 0 and b > 0:
                         new_up_right = pygame.transform.flip(up_right_image, True, True)
                         screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-                    elif block_pos == head_pos[0] and switch == 1 and pre_switch == 3:
+                    elif block_pos[0] - prev_block_pos[0] > 0 and b < 0:
+                        new_up_right = pygame.transform.flip(up_right_image, True, False)
+                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+
+                    elif block_pos[0] - prev_block_pos[0] < 0 and b < 0:
+                        new_up_right = pygame.transform.flip(up_right_image, False, False)
+                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    elif block_pos[0] - prev_block_pos[0] < 0 and b > 0:
+                        new_up_right = pygame.transform.flip(up_right_image, False, True)
+                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+
+                    elif block_pos[1] - prev_block_pos[1] > 0 and a > 0:
                         new_up_right = pygame.transform.flip(up_right_image, True, True)
                         screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        if i == 1:
-                            head_pos.pop(0)
-                    # =========================================================================================
-                    # Вертикальное и горизонтальное движение
-                    # =========================================================================================
-                    elif head_pos[0][0] - block_pos[0] == 0 and head_pos[0][1] - block_pos[1] != 0:
-                        screen. \
-                            blit(move_horizontal_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif head_pos[0][0] - block_pos[0] != 0 and head_pos[0][1] - block_pos[1] == 0:
-                        screen. \
-                            blit(move_vertical_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    elif block_pos[1] - prev_block_pos[1] > 0 and a < 0:
+                        new_up_right = pygame.transform.flip(up_right_image, False, True)
+                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
 
-                    elif i != 0 and i != len(snake_blocks) - 1:
-                        print("hello")
-                        if switch == 1 or switch == 4:
-                            screen.blit(move_vertical_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                        else:
-                            screen.blit(move_horizontal_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                # =========================================================================================
-                # Задняя
-                # =========================================================================================
-                elif i == 0 and len(head_pos) > 0:
-                    block_pos = (snake_blocks[i].x, snake_blocks[i].y)
-                    if head_pos[0][0] - block_pos[0] >= 0 and head_pos[0][1] - block_pos[1] == 0:
-                        new_back_vertical = pygame.transform.flip(back_vertical, False, False)
-                        screen.blit(new_back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif head_pos[0][0] - block_pos[0] <= 0 and head_pos[0][1] - block_pos[1] == 0:
-                        new_back_vertical = pygame.transform.flip(back_vertical, False, True)
-                        screen.blit(new_back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif head_pos[0][0] - block_pos[0] == 0 and head_pos[0][1] - block_pos[1] >= 0:
-                        new_back_horizontal = pygame.transform.flip(back_horizontal, True, False)
-                        screen.blit(new_back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif head_pos[0][0] - block_pos[0] == 0 and head_pos[0][1] - block_pos[1] <= 0:
-                        new_back_horizontal = pygame.transform.flip(back_horizontal, False, False)
-                        screen.blit(new_back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    else:
-                        head_pos.pop(0)
+                    elif block_pos[1] - prev_block_pos[1] < 0 and a < 0:
+                        new_up_right = pygame.transform.flip(up_right_image, False, False)
+                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    elif block_pos[1] - prev_block_pos[1] < 0 and a > 0:
+                        new_up_right = pygame.transform.flip(up_right_image, True, False)
+                        screen.blit(new_up_right, snake_images(snake_blocks[i].x, snake_blocks[i].y))
 
+                    elif block_pos[0] - next_block_pos[0] == 0 and block_pos[1] - next_block_pos[1] != 0:
+                        screen.blit(move_vertical_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    elif block_pos[1] - next_block_pos[1] == 0 and block_pos[0] - next_block_pos[0] != 0:
+                        screen.blit(move_horizontal_image, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+
+                # =========================================================================================
+                # Хвост змеи
+                # =========================================================================================
                 elif i == 0:
-                    if switch == 4:
+                    block_pos = (snake_blocks[i].y, snake_blocks[i].x)
+                    prev_block_pos = (snake_blocks[i + 1].y, snake_blocks[i + 1].x)
+                    if block_pos[0] - prev_block_pos[0] == 0 and block_pos[1] - prev_block_pos[1] < 0:
                         screen.blit(back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif switch == 1:
+                    elif block_pos[0] - prev_block_pos[0] == 0 and block_pos[1] - prev_block_pos[1] > 0:
                         new_back_vertical = pygame.transform.flip(back_vertical, False, True)
                         screen.blit(new_back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                    elif switch == 2:
+                    elif block_pos[0] - prev_block_pos[0] > 0 and block_pos[1] - prev_block_pos[1] == 0:
                         screen.blit(back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
                     else:
                         new_back_horizontal = pygame.transform.flip(back_horizontal, True, False)
                         screen.blit(new_back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
-                print(i)
+
+                elif i == 0:
+                    block_pos = (snake_blocks[i].y, snake_blocks[i].x)
+                    prev_block_pos = (snake_blocks[i + 1].y, snake_blocks[i + 1].x)
+                    if block_pos[0] - prev_block_pos[0] == 0 and block_pos[1] - prev_block_pos[1] < 0:
+                        screen.blit(back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    elif block_pos[0] - prev_block_pos[0] == 0 and block_pos[1] - prev_block_pos[1] > 0:
+                        new_back_vertical = pygame.transform.flip(back_vertical, False, True)
+                        screen.blit(new_back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    elif block_pos[0] - prev_block_pos[0] > 0 and block_pos[1] - prev_block_pos[1] == 0:
+                        screen.blit(back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                    else:
+                        new_back_horizontal = pygame.transform.flip(back_horizontal, True, False)
+                        screen.blit(new_back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+
+            elif len(snake_blocks) == 2 and i == 0:
+                if switch == 4:
+                    screen.blit(back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                elif switch == 1:
+                    new_back_vertical = pygame.transform.flip(back_vertical, False, True)
+                    screen.blit(new_back_vertical, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                elif switch == 2:
+                    screen.blit(back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
+                else:
+                    new_back_horizontal = pygame.transform.flip(back_horizontal, True, False)
+                    screen.blit(new_back_horizontal, snake_images(snake_blocks[i].x, snake_blocks[i].y))
 
         screen.blit(apple_image, snake_images(apple.x, apple.y))
         pygame.display.flip()
@@ -341,10 +351,11 @@ def start_the_game():
 
 main_theme = pygame_menu.themes.THEME_BLUE.copy()
 main_theme.set_background_color_opacity(0.5)
-menu = pygame_menu.Menu(300, 320, '',
+menu = pygame_menu.Menu(350, 320, '',
                         theme=main_theme)
 menu.add_text_input('Имя :', default='Игрок')
 menu.add_selector('Сложность :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
+menu.add_selector('Скин :', [("Обычный", 1), ("Сердечки", 2), ("Радуга", 3)], onchange=skin_select)
 menu.add_button('Играть', start_the_game)
 menu.add_button('Выход', pygame_menu.events.EXIT)
 
