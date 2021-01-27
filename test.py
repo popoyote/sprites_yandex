@@ -17,7 +17,7 @@ apple_image = pygame.image.load("apple.png")
 count_of_blocks = 20
 HEADER = 70
 block_size = 20
-MARGIN = 0
+MARGIN = 1
 
 size = [560, 530]
 screen = pygame.display.set_mode(size)
